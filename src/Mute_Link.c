@@ -63,7 +63,6 @@ bool IsVoiceEffect(u16 sfxId) {
         }
     }
     return false;
-
 }
 
 RECOMP_PATCH void Player_PlaySfx(Player* player, u16 sfxId) {
@@ -84,7 +83,6 @@ RECOMP_PATCH void Player_PlaySfx(Player* player, u16 sfxId) {
             AudioSfx_PlaySfx(sfxId, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                 &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
-
     }
 }
 
