@@ -1,0 +1,3 @@
+[submodule "mm-decomp"]
+	path = mm-decomp
+	url = https://github.com/zeldaret/mm.git
