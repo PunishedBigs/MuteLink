@@ -8,7 +8,7 @@
 id = "pb_mute_link"
 
 # Version of this mod.
-version = "1.1.6"
+version = "1.1.7"
 
 # The name that will show up for this mod in the mod menu. This should be human readable.
 display_name = "Mute Link"
