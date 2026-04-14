@@ -58,8 +58,9 @@ bool ShouldFormPlaySfx(Player* this) {
 }
 
 bool IsVoiceEffect(u16 sfxId) {
+    sfxId = sfxId | SFX_FLAG;
     for (size_t i = 0; i < sizeof(voiceSfx) / sizeof(voiceSfx[0]); i++) {
-        if (sfxId == voiceSfx[i] || sfxId == (voiceSfx[i] - SFX_FLAG)) {
+        if (sfxId == voiceSfx[i]) {
             return true;
         }
     }
