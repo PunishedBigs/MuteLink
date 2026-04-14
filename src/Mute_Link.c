@@ -26,8 +26,9 @@ int voiceSfx[] = {
     NA_SE_VO_LK_WAKE_UP, NA_SE_VO_LK_USING_UP_ENERGY, NA_SE_VO_LI_POO_WAIT, NA_SE_VO_DUMMY_225, NA_SE_VO_DUMMY_226, NA_SE_VO_DUMMY_227, NA_SE_VO_DUMMY_228, NA_SE_VO_DUMMY_229, NA_SE_VO_DUMMY_230,
     NA_SE_VO_DUMMY_231, NA_SE_VO_DUMMY_232, NA_SE_VO_DUMMY_233, NA_SE_VO_DUMMY_234, NA_SE_VO_DUMMY_235, NA_SE_VO_DUMMY_236, NA_SE_VO_DUMMY_237, NA_SE_VO_DUMMY_238, NA_SE_VO_DUMMY_239, NA_SE_VO_DUMMY_240,
     NA_SE_VO_DUMMY_241, NA_SE_VO_DUMMY_242, NA_SE_VO_DUMMY_243, NA_SE_VO_DUMMY_244, NA_SE_VO_DUMMY_245, NA_SE_VO_DUMMY_246, NA_SE_VO_DUMMY_247, NA_SE_VO_DUMMY_248, NA_SE_VO_DUMMY_249, NA_SE_VO_DUMMY_250,
-    NA_SE_VO_DUMMY_251, NA_SE_VO_DUMMY_252
+    NA_SE_VO_DUMMY_251, NA_SE_VO_DUMMY_252, NA_SE_VO_DUMMY_253, NA_SE_VO_DUMMY_254, NA_SE_VO_DUMMY_255
 };
+
 
 RECOMP_HOOK("Play_UpdateMain") void Play_UpdateMain(PlayState* this) {
     sPlayer = GET_PLAYER(this);
@@ -58,7 +59,7 @@ bool ShouldFormPlaySfx(Player* this) {
 
 bool IsVoiceEffect(u16 sfxId) {
     for (size_t i = 0; i < sizeof(voiceSfx) / sizeof(voiceSfx[0]); i++) {
-        if (sfxId == voiceSfx[i]) {
+        if (sfxId == voiceSfx[i] || sfxId == (voiceSfx[i] - SFX_FLAG)) {
             return true;
         }
     }

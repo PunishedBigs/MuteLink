@@ -20,3 +20,4 @@ discard/
 .vs/
 mm-decomp-renamed/
 Zelda64RecompSyms-renamed/
+*debug.h
