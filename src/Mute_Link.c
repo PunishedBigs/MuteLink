@@ -1,15 +1,7 @@
 #include "modding.h"
 #include "recompconfig.h"
 #include "global.h"
-
-#define ACTOR_AUDIO_FLAG_SFX_TIMER (1 << 4)
-#define ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_1 (1 << 0)
-#define ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2 (1 << 1)
-#define ACTOR_AUDIO_FLAG_SFX_CENTERED_1 (1 << 2)
-#define ACTOR_AUDIO_FLAG_SFX_CENTERED_2 (1 << 3) 
-#define ACTOR_AUDIO_FLAG_SFX_ALL                                                                      \
-    (ACTOR_AUDIO_FLAG_SFX_TIMER | ACTOR_AUDIO_FLAG_SFX_CENTERED_2 | ACTOR_AUDIO_FLAG_SFX_CENTERED_1 | \
-     ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2 | ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_1)
+#include "mutelink.h"
 
 Player* sPlayer;
 
