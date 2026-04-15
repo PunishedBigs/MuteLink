@@ -2,6 +2,14 @@
 #include "recompconfig.h"
 #include "global.h"
 
+#define ACTOR_AUDIO_FLAG_SFX_TIMER (1 << 4)
+#define ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_1 (1 << 0)
+#define ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2 (1 << 1)
+#define ACTOR_AUDIO_FLAG_SFX_CENTERED_1 (1 << 2)
+#define ACTOR_AUDIO_FLAG_SFX_CENTERED_2 (1 << 3) 
+#define ACTOR_AUDIO_FLAG_SFX_ALL                                                                      \
+    (ACTOR_AUDIO_FLAG_SFX_TIMER | ACTOR_AUDIO_FLAG_SFX_CENTERED_2 | ACTOR_AUDIO_FLAG_SFX_CENTERED_1 | \
+     ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2 | ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_1)
 
 Player* sPlayer;
 
@@ -96,8 +104,21 @@ RECOMP_PATCH void Audio_PlaySfx_GiantsMask(Vec3f* pos, u16 sfxId) {
         AudioSfx_PlaySfx((sfxId & 0x681F) + 0x20, pos, 4, &sGiantsMaskFreq, &gSfxDefaultFreqAndVolScale,
             &sGiantsMaskReverbAdd);
     }
-    if (!ShouldFormPlaySfx(sPlayer) && !IsVoiceEffect(sfxId)) {
+    else if (!ShouldFormPlaySfx(sPlayer) && !IsVoiceEffect(sfxId)) {
         AudioSfx_PlaySfx((sfxId & 0x681F) + 0x20, pos, 4, &sGiantsMaskFreq, &gSfxDefaultFreqAndVolScale,
             &sGiantsMaskReverbAdd);
+    }
+}
+
+RECOMP_PATCH void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
+    if (ShouldFormPlaySfx(sPlayer)) {
+        actor->sfxId = sfxId;
+        actor->audioFlags &= ~ACTOR_AUDIO_FLAG_SFX_ALL;
+        actor->audioFlags |= ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2;
+    }
+    else if (!ShouldFormPlaySfx(sPlayer) && !IsVoiceEffect(sfxId)) {
+        actor->sfxId = sfxId;
+        actor->audioFlags &= ~ACTOR_AUDIO_FLAG_SFX_ALL;
+        actor->audioFlags |= ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2;
     }
 }
