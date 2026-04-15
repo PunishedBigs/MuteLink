@@ -7,7 +7,6 @@ extern u8 gSfxBankMuted[7];
 u8 gSfxBankMutedStorage[7];
 Player* sPlayer;
 
-
 int voiceSfx[] = {
     NA_SE_VO_LI_SWORD_N, NA_SE_VO_LI_SWORD_L, NA_SE_VO_LI_LASH, NA_SE_VO_LI_HANG, NA_SE_VO_LI_CLIMB_END, NA_SE_VO_LI_DAMAGE_S, NA_SE_VO_LI_FREEZE, NA_SE_VO_LI_FALL_S, NA_SE_VO_LI_FALL_L,
     NA_SE_VO_LI_BREATH_REST, NA_SE_VO_LI_BREATH_DRINK, NA_SE_VO_LI_DOWN, NA_SE_VO_LI_TAKEN_AWAY, NA_SE_VO_LI_HELD, NA_SE_VO_LI_SNEEZE, NA_SE_VO_LI_SWEAT, NA_SE_VO_LI_DRINK, NA_SE_VO_LI_RELAX,
@@ -31,7 +30,6 @@ int voiceSfx[] = {
     NA_SE_VO_DUMMY_241, NA_SE_VO_DUMMY_242, NA_SE_VO_DUMMY_243, NA_SE_VO_DUMMY_244, NA_SE_VO_DUMMY_245, NA_SE_VO_DUMMY_246, NA_SE_VO_DUMMY_247, NA_SE_VO_DUMMY_248, NA_SE_VO_DUMMY_249, NA_SE_VO_DUMMY_250,
     NA_SE_VO_DUMMY_251, NA_SE_VO_DUMMY_252, NA_SE_VO_DUMMY_253, NA_SE_VO_DUMMY_254, NA_SE_VO_DUMMY_255
 };
-
 
 RECOMP_HOOK("Play_UpdateMain") void Play_UpdateMain(PlayState* this) {
     sPlayer = GET_PLAYER(this);
@@ -69,7 +67,6 @@ bool IsVoiceEffect(u16 sfxId) {
     return false;
 }
 
-
 RECOMP_HOOK("AudioSfx_PlaySfx") void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* volume, s8* reverbAdd) {
     sfxIdStorage = sfxId;
     gSfxBankMutedStorage[SFX_BANK_SHIFT(sfxIdStorage)] = gSfxBankMuted[SFX_BANK_SHIFT(sfxIdStorage)];
@@ -84,5 +81,4 @@ RECOMP_HOOK_RETURN("AudioSfx_PlaySfx") void RETURN_AudioSfx_PlaySfx(u16 sfxId, V
     if (!gSfxBankMutedStorage[SFX_BANK_SHIFT(sfxIdStorage)]) {
         gSfxBankMuted[SFX_BANK_SHIFT(sfxIdStorage)] = false;
     }
-
 }
