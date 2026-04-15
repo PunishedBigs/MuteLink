@@ -1,9 +1,12 @@
 #include "modding.h"
 #include "recompconfig.h"
 #include "global.h"
-#include "mutelink.h"
 
+int sfxIdStorage;
+extern u8 gSfxBankMuted[7];
+u8 gSfxBankMutedStorage[7];
 Player* sPlayer;
+
 
 int voiceSfx[] = {
     NA_SE_VO_LI_SWORD_N, NA_SE_VO_LI_SWORD_L, NA_SE_VO_LI_LASH, NA_SE_VO_LI_HANG, NA_SE_VO_LI_CLIMB_END, NA_SE_VO_LI_DAMAGE_S, NA_SE_VO_LI_FREEZE, NA_SE_VO_LI_FALL_S, NA_SE_VO_LI_FALL_L,
@@ -33,7 +36,6 @@ int voiceSfx[] = {
 RECOMP_HOOK("Play_UpdateMain") void Play_UpdateMain(PlayState* this) {
     sPlayer = GET_PLAYER(this);
 }
-
 
 bool ShouldFormPlaySfx(Player* this) {
     if (recomp_get_config_u32("_mute_human") && (this->transformation == PLAYER_FORM_HUMAN || this->currentMask == PLAYER_MASK_GIANT) && (this->currentMask != PLAYER_MASK_SCENTS)) {
@@ -67,50 +69,20 @@ bool IsVoiceEffect(u16 sfxId) {
     return false;
 }
 
-RECOMP_PATCH void Player_PlaySfx(Player* player, u16 sfxId) {
-    if (player->currentMask == PLAYER_MASK_GIANT) {
-        if (ShouldFormPlaySfx(player)) {
-            Audio_PlaySfx_AtPosWithPresetLowFreqAndHighReverb(&player->actor.projectedPos, sfxId);
-        }
-        else if (!ShouldFormPlaySfx(player) && !IsVoiceEffect(sfxId)) {
-            Audio_PlaySfx_AtPosWithPresetLowFreqAndHighReverb(&player->actor.projectedPos, sfxId);
-        }
 
-    } else {
-        if (ShouldFormPlaySfx(player)) {
-            AudioSfx_PlaySfx(sfxId, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        }
-        else if (!ShouldFormPlaySfx(player) && !IsVoiceEffect(sfxId)) {
-            AudioSfx_PlaySfx(sfxId, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+RECOMP_HOOK("AudioSfx_PlaySfx") void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* volume, s8* reverbAdd) {
+    sfxIdStorage = sfxId;
+    gSfxBankMutedStorage[SFX_BANK_SHIFT(sfxIdStorage)] = gSfxBankMuted[SFX_BANK_SHIFT(sfxIdStorage)];
+    if (!ShouldFormPlaySfx(sPlayer)) {
+        if (IsVoiceEffect(sfxIdStorage)) {
+            gSfxBankMuted[SFX_BANK_SHIFT(sfxId)] = true;
         }
     }
 }
 
-f32 sGiantsMaskFreq = 0.89167805f;
-s8 sGiantsMaskReverbAdd = 0x40;
+RECOMP_HOOK_RETURN("AudioSfx_PlaySfx") void RETURN_AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* volume, s8* reverbAdd) {
+    if (!gSfxBankMutedStorage[SFX_BANK_SHIFT(sfxIdStorage)]) {
+        gSfxBankMuted[SFX_BANK_SHIFT(sfxIdStorage)] = false;
+    }
 
-RECOMP_PATCH void Audio_PlaySfx_GiantsMask(Vec3f* pos, u16 sfxId) {
-    if (ShouldFormPlaySfx(sPlayer)) {
-        AudioSfx_PlaySfx((sfxId & 0x681F) + 0x20, pos, 4, &sGiantsMaskFreq, &gSfxDefaultFreqAndVolScale,
-            &sGiantsMaskReverbAdd);
-    }
-    else if (!ShouldFormPlaySfx(sPlayer) && !IsVoiceEffect(sfxId)) {
-        AudioSfx_PlaySfx((sfxId & 0x681F) + 0x20, pos, 4, &sGiantsMaskFreq, &gSfxDefaultFreqAndVolScale,
-            &sGiantsMaskReverbAdd);
-    }
-}
-
-RECOMP_PATCH void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
-    if (ShouldFormPlaySfx(sPlayer)) {
-        actor->sfxId = sfxId;
-        actor->audioFlags &= ~ACTOR_AUDIO_FLAG_SFX_ALL;
-        actor->audioFlags |= ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2;
-    }
-    else if (!ShouldFormPlaySfx(sPlayer) && !IsVoiceEffect(sfxId)) {
-        actor->sfxId = sfxId;
-        actor->audioFlags &= ~ACTOR_AUDIO_FLAG_SFX_ALL;
-        actor->audioFlags |= ACTOR_AUDIO_FLAG_SFX_ACTOR_POS_2;
-    }
 }
